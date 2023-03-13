@@ -1,47 +1,35 @@
-import { useEffect, useRef, useState } from "react";
-// import IframeResizer from "iframe-resizer-react";
-// import ReactPlayer from "react-player";
+import { useEffect, useState } from "react";
+
+// 컴포넌트 밖의 변수들은 한번만 실행되네 이거 중요한듯
+
+console.log("여기는 밖인가?");
+interface MovieProps {
+  id: number;
+  backdrop_path: string;
+  original_title: string;
+  overview: string;
+  poster_path: string;
+  title: string;
+  vote_average: number;
+  genre_ids: [number];
+}
 
 const Home = () => {
-  // const youtube = useRef<any>(null);
-  // const [src, setSrc] = useState<string>("");
-  // const [init, setInit] = useState<boolean>(false);
-  // const [playing, setPlaying] = useState<boolean>(true);
-  // useEffect(() => {
-  //   // alert("들어오자마자 실행?");
-  //   // play();
-  //   setSrc(`https://www.youtube.com/watch?v=jUNz-uTF--E`);
-  //   setInit(true);
-  // }, []);
-  // const onClick = () => {
-  //   console.log("클릭했냐?");
-  //   setPlaying((prev) => !prev);
-  // };
-
+  const [movies, setMovies] = useState<MovieProps[]>([]);
+  useEffect(() => {
+    (async () => {
+      const { results } = await (await fetch(`/api/movies`)).json();
+      setMovies(results);
+    })();
+  }, []);
   return (
     <div>
-      <h1 className="text-red-600">HOME</h1>
-      {/* <div className="hidden">
-        <iframe
-          width="560"
-          height="315"
-          src="https://www.youtube.com/embed/jUNz-uTF--E?autoplay=1"
-          title="YouTube video player"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          // allowfullscreen
-        ></iframe>
-      </div> */}
-
-      {/* {init ? (
-        <ReactPlayer
-          ref={youtube}
-          playing={playing}
-          loop={true}
-          url={src}
-          style={{ display: "none" }}
-        />
-      ) : null}
-      <button onClick={onClick}>{playing ? "⏸" : "▶"}</button> */}
+      {!movies && <h4>Loading...</h4>}
+      {movies?.map((movie) => (
+        <div key={movie.id}>
+          <h4>{movie.original_title}</h4>
+        </div>
+      ))}
     </div>
   );
 };

@@ -84,7 +84,7 @@ Next.js를 사용하면.scss 및.sass 확장자를 모두 사용하여 Sass를 �
 
 ***
 
-Layouts
+## Layouts
 React 모델을 사용하면 페이지를 일련의 컴포넌트로 분해할 수 있습니다. 이러한 컴포넌트 중 많은 부분이 페이지 간에 재사용되는 경우가 많습니다. 예를 들어 모든 페이지에 동일한 navigation과 footer가 있을 수 있습니다.
 https://nextjs.org/docs/basic-features/layouts
 
@@ -109,3 +109,185 @@ IMDB Mobile App Design 이미지
 https://dribbble.com/shots/11413278-Imdb-mobile-app-design
 
 ![image-20230313020650427](README.assets/image-20230313020650427.png)
+
+***
+
+## Image (No Img Element)
+HTML img 엘리먼트가 이미지를 표시하는 데 사용되었습니다. 더 나은 성능과 자동 이미지 최적화를 위해 Next.js의 내장 Image 컴포넌트를 사용하십시오.
+\```
+import Image from 'next/image'
+
+< Image
+src="https://example.com/test"
+alt="Landscape picture"
+width={500}
+height={500}
+/>
+\```
+https://nextjs.org/docs/messages/no-img-element
+
+***
+
+## fetch
+
+next.config.js
+Next.js에서 커스텀 설정을 하기 위해서는 프로젝트 디렉터리의 루트(package.json 옆)에 next.config.js 또는 next.config.mjs 파일을 만들 수 있습니다. next.config.js는 JSON 파일이 아닌 일반 Node.js 모듈입니다.
+Next.js 서버 및 빌드 단계에서 사용되며 브라우저 빌드에는 포함되지 않습니다.
+https://nextjs.org/docs/api-reference/next.config.js/introduction
+
+Redirects (URL변경됨)
+Redirect을 사용하면 들어오는 request 경로를 다른 destination 경로로 Redirect할 수 있습니다. Redirect을 사용하려면 next.config.js에서 redirects 키를 사용할 수 있습니다.
+
+redirects은 source, destination 및 permanent 속성이 있는 객체를 포함하는 배열을 반환하는 비동기 함수입니다.
+source: 들어오는 request 경로 패턴 (request 경로)
+destination: 라우팅하려는 경로 (redirect할 경로)
+permanent: true인 경우 클라이언트와 search 엔진에 redirect를 영구적으로 cache하도록 지시하는 308 status code를 사용하고, false인 경우 일시적이고 cache되지 않은 307 status code를 사용합니다.
+https://nextjs.org/docs/api-reference/next.config.js/redirects
+
+Rewrites (URL변경되지 않음)
+Rewrites를 사용하면 들어오는 request 경로를 다른 destination 경로에 매핑할 수 있습니다.
+Rewrites은 URL 프록시 역할을 하고 destination 경로를 mask하여 사용자가 사이트에서 위치를 변경하지 않은 것처럼 보이게 합니다. 반대로 redirects은 새 페이지로 reroute되고 URL 변경 사항을 표시합니다.
+https://nextjs.org/docs/api-reference/next.config.js/rewrites
+
+Movie Poster Path
+https://image.tmdb.org/t/p/w500/${movie.poster_path}
+
+주의! fetch할 때 /api/movies 또는 http://localhost:3000/api/movies 둘 다 가능하지만 http가 아닌 https로 fetch하게 되면 오류가 발생합니다.
+
+--------------------------------
+
+혹시 파라미터 관련해서 저같은 문제를 겪을 지도 모르는 분을 위해 댓글 남겨봅니다.
+fetch를 할 때 파라미터를 여러 개 붙여서 요청한다면 이런 식일 겁니다.
+fetch(`/api/foo=bar&key=val`)
+그리고 config에서 rewrite를 이렇게 해주죠.
+{
+source: "/api/:params",
+destination: `https://some.api/items?key=${API_KEY}&:params`
+}
+그런데 무슨 문제가 생기냐면, destination에서 "&:" 부분을 그대로 인식하지 않고 "&__ESC_COLON_" 이라는 문자열로 바꿔버립니다.
+그렇기 때문에 destination을 다음과 같이 바꿔주어야 합니다.
+`https://some.api/items?key=${API_KEY}${encodeURIComponent("&")}:params`
+이렇게 하면 :params로 넘어온 문자열이 &와 문제없이 결합합니다.
+
+***
+
+getServerSideProps
+
+![image-20230313141643565](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230313141643565.png)
+
+![image-20230313142217241](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230313142217241.png)
+
+![image-20230313142228647](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230313142228647.png)
+
+- 무엇이 나을까?
+
+![image-20230313142356290](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230313142356290.png)
+
+![image-20230313142412542](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230313142412542.png)
+
+```typescript
+// 타입스크립트 코드
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+
+interface IMovieProps {
+  id: number;
+  backdrop_path: string;
+  original_title: string;
+  overview: string;
+  poster_path: string;
+  title: string;
+  vote_average: number;
+  genre_ids: [number];
+}
+
+function Home({ results }: InferGetServerSidePropsType<GetServerSideProps>) {
+  return (
+    <div className="container">
+      {results?.map((movie: IMovieProps) => (
+        <div className="movie" key={movie.id}>
+          <img src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`} />
+          <h4>{movie.original_title}</h4>
+        </div>
+      ))}
+    </div>
+  );
+  ``;
+}
+
+/* export const getServerSideProps: GetServerSideProps = async () => {
+  ...
+}; */
+
+export async function getServerSideProps({}: GetServerSideProps) {
+  const { results } = await (
+    await fetch(`http://localhost:3000/api/movies`)
+  ).json();
+  return {
+    props: {
+      results,
+    },
+  };
+}
+
+export default Home;
+```
+
+getServerSideProps
+page에서 서버 측 랜더링 함수인 getServerSideProps함수를 export하는 경우 Next.js는 getServerSideProps에서 반환된 데이터를 사용하여 각 request에서 이 페이지를 pre-render합니다. getServerSideProps는 서버 측에서만 실행되며 브라우저에서는 실행되지 않습니다.
+https://nextjs.org/docs/basic-features/data-fetching/get-server-side-props
+
+getServerSideProps를 사용하여 request시 데이터 fetch하기
+다음 예는 request 시 데이터를 fetch하고 결과를 pre-render하는 방법을 보여줍니다.
+(fetch할 때 오류 뜨시는 분들은 https를 http로 바꿔주시면 됩니다.)
+\```
+export default function Home({ data }) {
+// 데이터 랜더링
+}
+
+// 매 request마다 실행됩니다.
+export async function getServerSideProps() {
+const res = await fetch(`https://.../data`);
+const data = await res.json();
+
+// props를 통해 page에 data전달
+return { props: { data } }
+}
+\```
+https://nextjs.org/docs/basic-features/data-fetching/get-server-side-props#using-getserversideprops-to-fetch-data-at-request-time
+
+getServerSideProps (타입스크립트와 함께 사용하기)
+https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#getserversideprops-with-typescript
+
+![image-20230313143330035](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230313143330035.png)
+
+## SEO가 필요한 페이지에 SSR을 적용하면 된다
+
+![image-20230313171557022](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230313171557022.png)
+
+![image-20230313171611937](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230313171611937.png)
+
+![image-20230313171640338](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230313171640338.png)
+
+![image-20230313171651955](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230313171651955.png)
+
+### getServerSideProps 추가 설명
+https://nextjs.org/docs/basic-features/data-fetching/get-server-side-props
+
+언제 getServerSideProps를 사용해야 하나요?
+request time에 반드시 데이터를 fetch해와야 하는 페이지를 pre-render해야 하는 경우에만 getServerSideProps를 사용해야 합니다.
+데이터를 pre-render할 필요가 없다면 client side에서 데이터를 가져오는 것을 고려해야 합니다.
+
+클라이언트 측에서 데이터 가져오는 과정 (Fetching data on the client side)
+페이지에 자주 업데이트되는 데이터가 포함되어 있고 데이터를 pre-render할 필요가 없는 경우 클라이언트 측에서 데이터를 가져올 수 있습니다.
+\1. 먼저 데이터가 없는 페이지를 즉시 표시합니다.
+\2. 페이지의 일부는 Static Generation을 사용해 pre-render할 수 있습니다.
+\3. 없는 데이터를 위해 loading 상태를 표시할 수 있습니다.
+\4. 그런 다음 클라이언트 측에서 데이터를 가져와 준비가 되면 표시합니다.
+
+이 접근 방식은 예를 들어 사용자 대시보드 페이지에 적합합니다.
+왜냐하면 대시보드는 사용자별 비공개 페이지이기 때문에 SEO와는 관련이 없으며 페이지를 미리 렌더링할 필요가 없습니다. 또한 데이터는 자주 업데이트되므로 요청 시 데이터를 가져와야 합니다.
+
+getServerSideProps가 오류 페이지를 렌더링합니까?
+getServerSideProps 내부에서 오류가 발생하면 pages/500.js 파일이 표시됩니다.
+500 page(서버 렌더링 오류 페이지)는 사용자가 커스터 마이징 할 수 있습니다.
+개발 중에는 이 파일이 사용되지 않고 대신 개발 오버레이가 표시됩니다.
