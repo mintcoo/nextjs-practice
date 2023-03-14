@@ -317,3 +317,108 @@ https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes
 ![image-20230314014857131](README.assets/image-20230314014857131.png)
 
 ![image-20230314014904603](README.assets/image-20230314014904603.png)
+
+***
+
+## Router Push
+
+````react
+router.push(url, as, options)
+
+클라이언트 측 전환을 처리합니다. 이 방법은 next/link가 충분하지 않은 경우에 유용합니다.
+url: UrlObject | String: 탐색할 URL
+as: UrlObject | String: 브라우저 URL 표시줄에 표시될 경로에 대한 선택적 데코레이터입니다.
+```
+router.push({
+pathname: '/post/[pid]',
+query: { pid: post.id },
+})
+```
++ 외부 URL에 대해서는 router.push()를 사용할 필요가 없습니다.
+window.location을 사용하는 것이 더 적합합니다.
+https://nextjs.org/docs/api-reference/next/router#routerpush
+
+Movie Detail API
+API: https://api.themoviedb.org/3/movie/{movie_id}?api_key=api_key&language=en-US
+https://developers.themoviedb.org/3/movies/get-movie-details
+````
+
+![image-20230314094530395](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314094530395.png)
+
+![image-20230314100409778](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314100409778.png)
+
+- router push로 했을때 url 마스킹 하는방법(push에 올려보면 다 나온다)
+
+![image-20230314095732268](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314095732268.png)
+
+![image-20230314095755612](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314095755612.png)
+
+![image-20230314095923412](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314095923412.png)
+
+- router.push로 url데이터 전달하는거와 같이 Link 컴포넌트도 가능
+
+![image-20230314100024476](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314100024476.png)
+
+***
+
+## catch all url
+
+```react
+// 타입스크립트로 쓰는 것
+type MovieDetailParams = [string, string];
+
+const router: NextRouter = useRouter();
+const [title, id] = (router.query.params || []) as MovieDetailParams;
+```
+
+
+
+![image-20230314110255618](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314110255618.png)
+
+![image-20230314110449980](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314110449980.png)
+
+![image-20230314110505227](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314110505227.png)
+
+![image-20230314111524867](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314111524867.png)
+
+````react
+getServerSideProps
+페이지에서 getServerSideProps(서버 측 렌더링)라는 함수를 export하는 경우 Next.js는 getServerSideProps에서 반환된 데이터를 사용하여 각 request에서 이 페이지를 pre-render합니다.
+https://nextjs.org/docs/basic-features/data-fetching/get-server-side-props
+
+getServerSideProps (Context parameter)
+params: 이 페이지에서 dynamic route(동적 경로)를 사용하는 경우 params에 route parameter가 포함됩니다. 페이지 이름이 [id].js이면 params는 { id: ... }처럼 보일 것입니다.
+query: 쿼리 문자열을 나타내는 객체입니다.
+https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#context-parameter
+
+getServerSideProps (타입스크립트와 함께 사용하기)
+```
+import { GetServerSideProps } from 'next'
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+// ...
+}
+
+function Page({ data }: InferGetServerSidePropsType< typeof getServerSideProps>)
+```
+https://nextjs.org/docs/api-reference/data-fetching/get-server-side-props#getserversideprops-with-typescript
+
+router.query.params 타입 지정 (타입스크립트)
+```
+type MovieDetailParams = [string, string] | [];
+
+const router: NextRouter = useRouter();
+const [title, id] = (router.query.params || []) as MovieDetailParams;
+````
+
+![image-20230314111139670](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314111139670.png)
+
+![image-20230314111146686](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314111146686.png)
+
+![image-20230314111158726](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314111158726.png)
+
+![image-20230314111218083](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314111218083.png)
+
+![image-20230314111229856](C:\Users\SSAFY\Desktop\NextJSPractice\nextjs-practice\README.assets\image-20230314111229856.png)
+
+- router에 들어있는 영화제목과 id를 얻기위해 getServerSideProps를 쓸수있다

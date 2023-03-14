@@ -5,8 +5,8 @@ import Seo from "./Seo";
 
 export default function Layout({ children }: { children: any }) {
 	const router = useRouter();
-  // console.log(router.pathname,"z");
-	const titleList: any = useRef({ "/": "Home", "/about": "About" });
+	const titleList: any = useRef({ "/": "Home", "/about": "About", "/movies/([a-zA-Z0-9]+)" : "Movies" });
+  console.log(titleList.current["/movies/asd"]);
 	return (
 		<>
 			<Seo title={titleList.current[router.pathname]} />

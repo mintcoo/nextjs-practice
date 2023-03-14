@@ -19,6 +19,11 @@ const nextConfig = {
         // 리라이트는 주소가 바뀌는게 안보이고 리다이렉트해줌
         source: "/api/movies",
         destination: `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`,
+      },
+      {
+        // 디테일 페이지를 위한
+        source: "/api/movies/:id",
+        destination: `https://api.themoviedb.org/3/movie/:id?api_key=${API_KEY}`,
       }
     ]
   }
