@@ -1,14 +1,25 @@
 // 전체적으로 next-redux-wrapper 공식문서참고함
-import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import { createWrapper } from "next-redux-wrapper";
+import { configureStore, ThunkAction, Action, EnhancedStore } from "@reduxjs/toolkit";
+import { createWrapper, MakeStore } from "next-redux-wrapper";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
-import rootReducer from "./reducer";
+import persistedReducer from "./reducer";
+import { persistStore } from "redux-persist";
 
 const makeStore = () =>
   configureStore({
-    reducer: rootReducer,
+    reducer: persistedReducer,
     devTools: true,
   });
+// export const store = configureStore({
+//   reducer: persistedReducer,
+//   devTools: true,
+// });
+// const setupStore = (context: any): EnhancedStore => store;
+
+// const makeStore: MakeStore<any> = (context: any) => setupStore(context);
+
+// 새로고침해도 데이터 보존
+// export const persistor = persistStore(makeStore);
 
 export type AppStore = ReturnType<typeof makeStore>;
 export type AppState = ReturnType<AppStore["getState"]>;

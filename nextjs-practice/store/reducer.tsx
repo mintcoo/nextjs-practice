@@ -1,6 +1,14 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
-import countSlice from "./features/countSlice"
+import countSlice from "./features/countSlice";
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+
+// persistconfig 세팅
+const persistConfig = {
+  key: 'root',
+  storage,
+}
 
 // 리듀서들을 합쳐주는곳
 const combinedReducer = combineReducers({
@@ -18,4 +26,6 @@ const rootReducer: typeof combinedReducer = (state, action) => {
   return combinedReducer(state, action);
 };
 
-export default rootReducer;
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+
+export default persistedReducer;

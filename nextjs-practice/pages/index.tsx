@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps =
   wrapper.getServerSideProps((store) => async () => {
     console.log("SSR");
     // 서버 영역에서 Redux 사용
-    await store.dispatch(fetchAsync("갔냐?"))
+    // await store.dispatch(fetchAsync("갔냐?"))
     // 전달할 props가 있으면 전달
     return {
       props: {

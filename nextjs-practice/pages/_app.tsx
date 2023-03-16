@@ -6,7 +6,8 @@ import "../styles/globals.css";
 // @ts-ignore
 import ReactPlayer from "react-player";
 import Layout from "@/components/Layout";
-import { wrapper } from "@/store";
+import {  wrapper } from "@/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const youtube = useRef<any>(null);
@@ -26,7 +27,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Layout>
       {/* <NavBar /> */}
-      <Component {...pageProps} />
+      {/* <PersistGate loading={<div>loading...</div>} persistor={persistor}> */}
+        <Component {...pageProps} />
+      {/* </PersistGate> */}
       {init ? (
         <ReactPlayer
           ref={youtube}
