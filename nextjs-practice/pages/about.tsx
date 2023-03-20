@@ -1,8 +1,13 @@
+import { useState } from "react";
 
 export default function Potato() {
-	return (
-		<div>
-			<h1>About</h1>
-		</div>
-	);
+
+  return (
+    <>
+      <h1>About</h1>
+      <h1>About</h1>
+      <h1>About</h1>
+      <h1>About</h1>
+    </>
+  );
 }
