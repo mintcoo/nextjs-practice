@@ -1,4 +1,4 @@
-# NextJS Practice
+# NextJS Practice - V12 (옛버전)
 
 - 라이브러리와 프레임워크의 주요 차이점
 
