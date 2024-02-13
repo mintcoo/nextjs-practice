@@ -188,3 +188,14 @@ export const metadata: Metadata = {
 
 - 공식문서에 다양하게 많은 것들이 있다
 - https://nextjs.org/docs/app/building-your-application/optimizing/metadata
+
+## Dynamic Route
+
+```react
+export default function MovieDetail(props) {
+  console.log(props);
+  return <h1>Movie Detail</h1>;
+}
+// props를 찍어보면 백엔드에서 실행된다(터미널에 찍혀보임 브라우저 콘솔이 아니라)
+// http://localhost:3000/movies/1?region=kr << url에서
+// { params: { id: '1' }, searchParams: { region: 'kr' } } << 터미널에 이렇게 찍힘
