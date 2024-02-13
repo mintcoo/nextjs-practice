@@ -49,3 +49,18 @@
 - 다만 안에 page.tsx가 없으면 url이 아니라 일반 컴포넌트로 쓸수 있음
 - 스샷처럼 components란 폴더안에 page.tsx파일을 만들지 않았기에 일반 컴포넌트로 쓸 수 있음
 - 사용자가 url로 보게되는 페이지는 page.tsx임 (이전 버전의 index.tsx와 용도가 같음)
+
+### Not Found
+
+- app폴더 안에 not-found.tsx 이름으로 만들어야함
+
+### usePathname
+
+![image-20240213144336881](C:\Users\han\Desktop\NextJS\nextjs-practice\nextjs-v14-practice\assets\image-20240213144336881.png)
+
+- 이런 에러 발생 해결을 위해 가장 윗 줄에 'use client' 추가
+- 왜 이런일이 일어나는지 다음거에 봐보자
+
+## CSR vs SSR
+
+- 
